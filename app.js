@@ -73,15 +73,26 @@ async function login() {
       });
     
     //hide the login button and show the logout button
-    loginButton.style.display = "none" ;
-    logoutButton.style.display = "block";
-    transferButton.style.display = "block" ;
-    updateButton.style.display = "block";
-    sendButton.style.display = "block";
     
     
+ 
     //update
     await updatePlayer();
+    loginButton.style.display = "none"; 
+    logoutButton.style.display = "block"; 
+    playButton.style.display = "none"; 
+    
+    updateButton.style.display = "block";
+    restartButton.style.display = "none"; 
+    sendButton.style.display = "block"; 
+    let status = await contract.methods.status_map(accounts[0]).call();
+    if (["1","2","3","4","5","6"].indexOf(status) != -1){
+        transferButton.style.display = "none"; 
+    }
+    else{
+        transferButton.style.display = "block"; 
+    }
+        
 }  
 
 //logout function
@@ -91,11 +102,13 @@ async function logout(){
     
     //update
     await updatePlayer();
-    loginButton.style.display = "block" ;
-    logoutButton.style.display = "none";
-    updateButton.style.display = "none";
-    transferButton.style.display = "none" ;
-    sendButton.style.display = "none";
+    loginButton.style.display = "block"; 
+    logoutButton.style.display = "none"; 
+    playButton.style.display = "none"; 
+    transferButton.style.display = "none"; 
+    updateButton.style.display = "block";
+    restartButton.style.display = "none"; 
+    sendButton.style.display = "none"; 
     accBalance.innerHTML = "";
     showAccount.innerHTML = "";
 
@@ -112,12 +125,17 @@ async function transfer_money(){
         accBalance.innerHTML = b;
     });
 
-    //hide transfer button and show play button
-    transferButton.style.display = "none";
-    playButton.style.display = "block";
+    
 
     //update
     await updatePlayer();
+    loginButton.style.display = "none"; 
+    logoutButton.style.display = "block"; 
+    playButton.style.display = "block"; 
+    transferButton.style.display = "none"; 
+    updateButton.style.display = "block";
+    restartButton.style.display = "none"; 
+    sendButton.style.display = "block"; 
 }
 
 //function to play dice
@@ -139,6 +157,30 @@ async function play_dice(){
    
     //show hide play and transfer button based on the status
     await updatePlayer();
+    loginButton.style.display = "none"; 
+    logoutButton.style.display = "block"; 
+    transferButton.style.display = "none"; 
+    updateButton.style.display = "block";
+    sendButton.style.display = "block"; 
+    //if all status are 8 
+    let all_status_8 = false;
+    let num = 0 ;
+    for (let i=0;i<data.addresses.length;i++){
+        num = num +data.status[i];
+    }
+    if (num == 8*data.addresses.length){
+        all_status_8 = true;
+    }
+    if(data.addresses.length > 1 && all_status_8){
+        playButton.style.display = "block"; 
+        restartButton.style.display = "none"; 
+    }
+    else{
+        //else show the restart button 
+        playButton.style.display = "none"; 
+        restartButton.style.display = "block";
+    }
+     
 }
 
 //get player data from the smartcontract and display
@@ -199,15 +241,15 @@ async function updatePlayer(){
     //money transfered but no winner
     if (["1","2","3","4","5","6"].indexOf(status) != -1){
         //show the play button and hide the transfer button
-        playButton.style.display = "none";
-        transferButton.style.display = "none";
+        //playButton.style.display = "none";
+        //transferButton.style.display = "none";
         //display correct dice image
         dicePicture.src = dicePictureArray[status-1];
     }
     else if(status == "8" || status == "0"){
         //hide play button and show transfer button
-        playButton.style.display = "block" ;
-        transferButton.style.display = "none";
+        //playButton.style.display = "block" ;
+        //transferButton.style.display = "none";
         dicePicture.src = "dice.gif";
     }
     else{
@@ -224,8 +266,10 @@ async function updatePlayer(){
         }
         
     }
-    
-   
+    //if only one player
+    if (data.addresses.length < 2){
+        restart_condition = false;
+    }
     //console.log(restart_condition);
     if (restart_condition){
         console.log("restart");
@@ -276,7 +320,15 @@ async function restart(){
     //hide all buttons except logout and transfer
 
     //update table
-    restartButton.style.display = "none";
+    loginButton.style.display = "none"; 
+    logoutButton.style.display = "block"; 
+    transferButton.style.display = "block"; 
+    updateButton.style.display = "block";
+    sendButton.style.display = "block"; 
+
+    playButton.style.display = "none"; 
+    restartButton.style.display = "none"; 
+    //restartButton.style.display = "none";
 }
 //function to create table data
 function create_table_string(){
@@ -304,3 +356,4 @@ function find_index(_array,_data){
     }
     return -1;
 }
+
