@@ -165,8 +165,12 @@ async function play_dice(){
     //if all status are 8 
     let all_status_8 = false;
     let num = 0 ;
+    let everybody_not_played = false;
     for (let i=0;i<data.addresses.length;i++){
-        num = num +data.status[i];
+        num = num +Number(data.status[i]);
+        if (data.status[i] == 8 || data.status[i] ==7){
+            everybody_not_played = true;
+        }
     }
     if (num == 8*data.addresses.length){
         all_status_8 = true;
@@ -174,6 +178,12 @@ async function play_dice(){
     if(data.addresses.length > 1 && all_status_8){
         playButton.style.display = "block"; 
         restartButton.style.display = "none"; 
+    }
+    //length < 2 or all not playeyed status 7 or 8
+    else if(data.addresses.length < 2 || everybody_not_played ){
+        //else show the restart button 
+        playButton.style.display = "none"; 
+        restartButton.style.display = "none";
     }
     else{
         //else show the restart button 
