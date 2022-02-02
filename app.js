@@ -80,19 +80,24 @@ async function login() {
     await updatePlayer();
     loginButton.style.display = "none"; 
     logoutButton.style.display = "block"; 
-    playButton.style.display = "none"; 
+    
     
     updateButton.style.display = "block";
     restartButton.style.display = "none"; 
     sendButton.style.display = "block"; 
     let status = await contract.methods.status_map(accounts[0]).call();
-    if (["1","2","3","4","5","6"].indexOf(status) != -1){
+    if (["1","2","3","4","5","6","8","0"].indexOf(status) != -1){
         transferButton.style.display = "none"; 
     }
     else{
         transferButton.style.display = "block"; 
     }
-        
+    if (status == 8){
+        playButton.style.display = "block"; 
+    }  
+    else{
+        playButton.style.display = "none"; 
+    }
 }  
 
 //logout function
@@ -172,6 +177,7 @@ async function play_dice(){
             everybody_not_played = true;
         }
     }
+    console.log(num);
     if (num == 8*data.addresses.length){
         all_status_8 = true;
     }
@@ -295,6 +301,12 @@ async function updatePlayer(){
         console.log("balance");
         console.log(b);
     });
+
+    //logic for buttons
+    if(status == "8"){
+        //show play button 
+        playButton.style.display = "block" ;
+    }
     console.log(data.addresses);
     console.log(data.status);
     console.log(data.winner);
