@@ -1,0 +1,165 @@
+<!DOCTYPE html lang = "en" >
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    
+
+    <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.0.0-beta.34/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/ethereumjs/browser-builds/dist/ethereumjs-tx/ethereumjs-tx-1.3.3.min.js"></script>
+    
+</head>
+<body style="background-color: rgb(54, 54, 54);">
+    <div class="container jumbotron" style="background-color: rgb(0, 0, 0);">
+     <!--Top Layer-->
+    <div class="container jumbotron" style="background-color: rgb(20, 20, 20);color:white">
+        <button class="loginButton btn-warning" onclick = "login()">Login with Metamask</button>
+        <button class="logoutButton btn-warning" onclick="logout()">Logout</button>
+        <!--center><h1>Roll The Dice App</h1></center-->
+        <div>
+            <center>
+            <div class="card text-white  mb-8" style="width: 36rem;height: 24rem;background-image: url('card.gif');">
+                
+                <h3 class="card-title"></h3>
+                <p class="card-text">
+                    
+              <input type="text"  class="receiver"  placeholder="Enter Receiver's Address">
+              <br><br>
+              <input type="number" class="value"  placeholder="Enter Amount">
+              <br><br><br><br><br><br>
+              <button onclick = "sendMoney()" class="sendButton btn btn-primary">Send Money</button>
+              </div>
+          </div>
+        </center>
+        </div>
+        
+        
+            
+    </div>
+    <!--Second Layer-->
+   <div class="container container-fluid jumbotron"  style="background-color: firebrick;color:white"> 
+       
+       <div class="row">
+            <div class="col-sm">
+               <!--account credential-->
+               <h2>Account: <span class="showAccount"></span> </h2>
+            </div>
+            <div class="col-sm">
+               <!--account balance-->
+               <h2><img width = "40px" src ="matic.png">
+                Balance: <span class="accBalance"></span></h2>
+            </div>
+       </div>
+   </div> 
+
+    <!--Third layer-->
+    <div class="container container-fluid jumbotron"  style="background-color:rgb(238, 187, 93);color:white"> 
+        <div class="row">
+             <div class="col-sm">
+                <!--account credential-->
+                <button onclick = "transfer_money()" class="transferButton btn btn-primary"><h2>Transfer Money</h2></button>
+                <button class="playButton btn btn-success" onclick="play_dice()"><h2>Play the Game</h2></button>
+                <button class="restartButton btn btn-danger" onclick="restart()"><h2>Restart Game</h2></button>
+                
+             </div>
+             <div class="col-sm">
+                <!--account balance-->
+                <center><img class = "dicePicture" width = "200px" src ="dice.gif" class="winner"></center> 
+               
+             </div>
+        </div>
+    </div> 
+
+    <!--Fourth Layer-->
+    <div class="container container-fluid jumbotron"  style="background-color:rgb(55, 113, 146);color:white"> 
+        <button onclick = "updatePlayer()" class="updateButton btn btn-warning">update player</button>
+        <div class="row" style="background-color: forestgreen;align-self: center;">
+            <div class="col-sm-8"><center><h2>Players</h2></center> </div>
+           
+            <div class="col-sm-4"><center><h2>Winner</h2></center> </div>
+        </div>
+        <center>
+        <div class="row">
+           
+             <div class="col-9" style="background-color: aliceblue;">
+               
+                <table class="table table-light table-striped">
+                    
+                    <thead>
+                      <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">Icon</th>
+                        <th scope="col">Address</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Balance</th>
+                      </tr>
+                    </thead>
+                   
+                    <tbody class = "tableBody">
+                     
+                    </tbody>
+                   
+                  </table>
+                
+             </div>
+             <div class="col-3" style="background-color: aliceblue;">  
+                 <center><img width = "220px" src ="win.gif" class="winner"></center> 
+
+             </div>
+        </div>
+    </center>
+    </div> 
+</div>
+</body>
+<script src="abi.js"></script>
+<script src="app.js"></script>
+<script>
+        
+const senderElement = document.querySelector(".sender");
+const receiverElement = document.querySelector(".receiver");
+const valueElement = document.querySelector(".value");
+
+//const url = "http://127.0.0.1:7545"
+//connect to the RPC
+//let web3 = new Web3(url);
+async function sendMoney(){
+    
+    window.accounts = await ethereum.request({method:"eth_requestAccounts"});
+    //var sender = senderElement.value  //"0x1faE749D8c2400F72d4536e5eCB7D112BDDb0Ee1" ;
+    var receiver = receiverElement.value//"0x59d9cf43D2e0cd73082A5fC81318e84263E9B081";
+    var value ;// = "500000000000000000"; // one ether
+    if(valueElement.value){
+        value = valueElement.value*10**18
+    };
+    //console.log(valueElement.value*10**18);
+    await sendBalance(accounts[0],receiver,value);
+    //update balance 
+    //await web3.eth.getBalance(accounts[0],(e,b)=>{
+        //accBalance.innerHTML = web3.utils.fromWei(b,"ether");
+    //});
+    await updatePlayer();
+}
+//send ether to an account
+async function sendBalance(_from,_to,_value){
+    console.log("foo");
+    //sending money via non meta web3
+    await web3.eth.sendTransaction({
+        from: _from,
+        to: _to,
+        value: _value
+    }).then(()=>{
+        console.log("money sent");
+    });
+}
+
+</script>
+</html>
